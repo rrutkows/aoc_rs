@@ -1,5 +1,7 @@
 pub mod d01;
+pub mod d02;
 
-pub fn get_input() -> String {
-    std::fs::read_to_string("src/d01/input.txt").expect("input.txt should be present in src/dnn/")
+pub fn get_input(day: u8) -> String {
+    let path = format!("src/d{day:02}/input.txt");
+    std::fs::read_to_string(path).expect("input.txt should be present in src/dnn/")
 }
