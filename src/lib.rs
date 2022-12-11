@@ -10,6 +10,7 @@ pub mod d07;
 pub mod d08;
 pub mod d09;
 pub mod d10;
+pub mod d11;
 
 pub fn get_input(day: u8) -> String {
     let path = format!("src/d{day:02}/input.txt");
