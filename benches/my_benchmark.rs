@@ -16,6 +16,7 @@ fn criterion_benchmark(c: &mut Criterion) {
 
     let input = aoc2022::get_input(17);
     c.bench_function("d17p1", |b| b.iter(|| d17::solve(&input, 2022)));
+    c.bench_function("d17p2", |b| b.iter(|| d17::solve(&input, 1000000000000)));
 }
 
 criterion_group!(benches, criterion_benchmark);
