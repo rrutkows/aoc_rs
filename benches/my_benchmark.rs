@@ -1,4 +1,4 @@
-use aoc2022::{d14, d15, d16, d17};
+use aoc2022::{d14, d15, d16, d17, d18};
 use criterion::{criterion_group, criterion_main, Criterion};
 
 fn criterion_benchmark(c: &mut Criterion) {
@@ -17,6 +17,9 @@ fn criterion_benchmark(c: &mut Criterion) {
     let input = aoc2022::get_input(17);
     c.bench_function("d17p1", |b| b.iter(|| d17::solve(&input, 2022)));
     c.bench_function("d17p2", |b| b.iter(|| d17::solve(&input, 1000000000000)));
+
+    let input = aoc2022::get_input(18);
+    c.bench_function("d18p1", |b| b.iter(|| d18::solve(&input)));
 }
 
 criterion_group!(benches, criterion_benchmark);
