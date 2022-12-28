@@ -60,6 +60,11 @@ pub fn solve02(input: &str) -> u32 {
 }
 
 fn use_bprint(bprint: &Blueprint, time: u8) -> u32 {
+    // We can only build one robot per minute.
+    // There's no producing more minerals per minute than the mineral's highest cost of any robot.
+    let max_robot_count: [u32; 3] =
+        std::array::from_fn(|i| bprint.robots.iter().map(|cost| cost[i]).max().unwrap() as u32);
+
     let mut geodes: u32 = 0;
     let mut q: Vec<Snapshot> = Vec::new();
     q.push(Snapshot::new());
@@ -78,10 +83,13 @@ fn use_bprint(bprint: &Blueprint, time: u8) -> u32 {
                     .iter()
                     .enumerate()
                     .rev() //try building geode robots first
-                    .filter(|(_, cost)| {
+                    .filter(|(i, cost)| {
+                        // No point building more robots that the highest cost of any other robot
+                        // (except for geode robots)
+                        (*i == 3 || current.robots[*i] < max_robot_count[*i])
                         // Select robots affordable for what we have now
                         // plus what we can collect before the time ends.
-                        cost.iter().enumerate().all(|(j, c)| {
+                        && cost.iter().enumerate().all(|(j, c)| {
                             *c as u32 <= current.minerals[j] + (time_left - 1) * current.robots[j]
                         })
                     })
