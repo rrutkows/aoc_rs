@@ -37,8 +37,9 @@ fn criterion_benchmark(c: &mut Criterion) {
     c.bench_function("d22p1", |b| b.iter(|| d22::solve01(&input)));
     c.bench_function("d22p2", |b| b.iter(|| d22::solve02(&input)));
 
-    let input = aoc2022::get_input(22);
+    let input = aoc2022::get_input(23);
     c.bench_function("d23p1", |b| b.iter(|| d23::solve01(&input)));
+    c.bench_function("d23p2", |b| b.iter(|| d23::solve02(&input)));
 }
 
 criterion_group!(benches, criterion_benchmark);

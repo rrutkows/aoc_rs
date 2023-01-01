@@ -1,21 +1,28 @@
-use std::{collections::HashMap, iter};
+use std::collections::HashMap;
 
-type Coords = (usize, usize);
-type Map = Vec<Vec<Option<usize>>>;
+type Coords = (i32, i32);
+type Map = HashMap<Coords, usize>;
 
 const N: u8 = 0;
 const S: u8 = 1;
 const W: u8 = 2;
 const E: u8 = 3;
 
-pub fn solve01(input: &str) -> usize {
-    solve(input, 10)
+pub fn solve01(input: &str) -> i32 {
+    let (_, empty_space) = solve(input, Some(10));
+    empty_space
 }
 
-fn solve(input: &str, round_count: usize) -> usize {
-    let (mut map, mut elves) = parse(input, round_count + 1);
+pub fn solve02(input: &str) -> usize {
+    let (rounds, _) = solve(input, None);
+    rounds
+}
 
-    for r in 0..round_count {
+fn solve(input: &str, round_count: Option<usize>) -> (usize, i32) {
+    let (mut map, mut elves) = parse(input);
+
+    let mut r = 0;
+    while round_count.map(|rc| rc > r).unwrap_or(true) {
         // targets:
         // Some - exactly one elf proposes to move there,
         // None - more than one elf proposes to move there
@@ -43,20 +50,26 @@ fn solve(input: &str, round_count: usize) -> usize {
 
         for (k, v) in targets.into_iter() {
             v.map(|i| {
-                map[elves[i].1][elves[i].0] = None;
-                map[k.1][k.0] = Some(i);
+                map.remove(&elves[i]);
+                map.insert(k, i);
                 elves[i] = k;
             });
         }
+
+        r += 1;
     }
 
     let (min_x, min_y, max_x, max_y) = elves.iter().fold(
-        (usize::MAX, usize::MAX, usize::MIN, usize::MIN),
+        (i32::MAX, i32::MAX, i32::MIN, i32::MIN),
         |(min_x, min_y, max_x, max_y), &(x, y)| {
             (min_x.min(x), min_y.min(y), max_x.max(x), max_y.max(y))
         },
     );
-    (max_x - min_x + 1) * (max_y - min_y + 1) - elves.len()
+
+    (
+        r + 1,
+        (max_x - min_x + 1) * (max_y - min_y + 1) - elves.len() as i32,
+    )
 }
 
 fn can_move(&(x, y): &Coords, d: u8, map: &Map) -> bool {
@@ -67,7 +80,7 @@ fn can_move(&(x, y): &Coords, d: u8, map: &Map) -> bool {
         E => [(x + 1, y - 1), (x + 1, y), (x + 1, y + 1)],
         _ => panic!("bad direction"),
     };
-    adjacent.into_iter().all(|(x, y)| map[y][x].is_none())
+    adjacent.into_iter().all(|c| !map.contains_key(&c))
 }
 
 fn make_move(&(x, y): &Coords, d: u8) -> Coords {
@@ -93,42 +106,22 @@ fn _get_adjacent(&(x, y): &Coords) -> [Coords; 8] {
     ]
 }
 
-fn _dump(map: &Map) {
-    for row in map.iter() {
-        println!(
-            "{}",
-            String::from_iter(row.iter().map(|t| t.map(|_| '#').unwrap_or('.')))
-        )
-    }
-}
-
-fn parse(input: &str, buffer: usize) -> (Map, Vec<Coords>) {
-    let mut lines = input.lines().peekable();
-    let width = lines.peek().unwrap().len() + 2 * buffer;
-    let mut map: Map = Vec::from_iter(
-        iter::repeat_with(|| Vec::from_iter(iter::repeat(None).take(width))).take(buffer),
-    );
+fn parse(input: &str) -> (Map, Vec<Coords>) {
+    let mut map: Map = HashMap::new();
     let mut elves: Vec<Coords> = Vec::new();
 
-    let mut y = buffer;
-    for line in lines {
-        let mut row: Vec<Option<usize>> = Vec::new();
-        row.resize(buffer, None);
+    for (y, line) in input.lines().enumerate() {
         for (x, c) in line.chars().enumerate() {
             match c {
                 '#' => {
-                    row.push(Some(elves.len()));
-                    elves.push((x + buffer, y));
+                    let c = (x as i32, y as i32);
+                    map.insert(c, elves.len());
+                    elves.push(c);
                 }
-                _ => row.push(None),
+                _ => {}
             }
         }
-        row.resize(width, None);
-        map.push(row);
-        y += 1;
     }
-
-    map.extend(iter::repeat_with(|| Vec::from_iter(iter::repeat(None).take(width))).take(buffer));
 
     (map, elves)
 }
