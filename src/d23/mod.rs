@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{hash_map::Entry, HashMap};
 
 type Coords = (i32, i32);
 type Map = HashMap<Coords, usize>;
@@ -36,10 +36,13 @@ fn solve(input: &str, round_count: Option<usize>) -> (usize, i32) {
             // If an elf can go anywhere, ie len()==4, this means he has no neighbours. He doesn't move then.
             if (1..=3).contains(&possible_directions.len()) {
                 let target = make_move(e, possible_directions[0]);
-                if targets.contains_key(&target) {
-                    targets.insert(target, None);
-                } else {
-                    targets.insert(target, Some(i));
+                match targets.entry(target) {
+                    Entry::Occupied(mut e) => {
+                        e.get_mut().take();
+                    }
+                    Entry::Vacant(e) => {
+                        e.insert(Some(i));
+                    }
                 }
             }
         }
@@ -49,11 +52,11 @@ fn solve(input: &str, round_count: Option<usize>) -> (usize, i32) {
         }
 
         for (k, v) in targets.into_iter() {
-            v.map(|i| {
+            if let Some(i) = v {
                 map.remove(&elves[i]);
                 map.insert(k, i);
                 elves[i] = k;
-            });
+            }
         }
 
         r += 1;
@@ -111,15 +114,10 @@ fn parse(input: &str) -> (Map, Vec<Coords>) {
     let mut elves: Vec<Coords> = Vec::new();
 
     for (y, line) in input.lines().enumerate() {
-        for (x, c) in line.chars().enumerate() {
-            match c {
-                '#' => {
-                    let c = (x as i32, y as i32);
-                    map.insert(c, elves.len());
-                    elves.push(c);
-                }
-                _ => {}
-            }
+        for (x, _) in line.chars().enumerate().filter(|(_, c)| *c == '#') {
+            let c = (x as i32, y as i32);
+            map.insert(c, elves.len());
+            elves.push(c);
         }
     }
 
