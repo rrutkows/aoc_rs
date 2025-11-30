@@ -1,7 +1,12 @@
-use std::{fmt::Display, time::Instant};
+use std::{fmt::Display, fs, time::Instant};
 
 pub fn get_input(year: u16, day: u8) -> String {
-    let path = format!("year{year}/src/d{day:02}/input.txt");
+    let path = if fs::exists(format!("year{year}")).unwrap() {
+        format!("year{year}/src/d{day:02}/input.txt")
+    } else {
+        format!("src/d{day:02}/input.txt")
+    };
+
     std::fs::read_to_string(path).expect("input.txt should be present in src/dnn/")
 }
 
