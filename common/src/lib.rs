@@ -1,0 +1,15 @@
+use std::{fmt::Display, time::Instant};
+
+pub fn get_input(year: u16, day: u8) -> String {
+    let path = format!("year{year}/src/d{day:02}/input.txt");
+    std::fs::read_to_string(path).expect("input.txt should be present in src/dnn/")
+}
+
+pub fn run<T, F>(f: F)
+where
+    T: Display,
+    F: Fn() -> T,
+{
+    let start = Instant::now();
+    println!("{} {:?}", f(), start.elapsed());
+}

@@ -1,16 +1,16 @@
-https://adventofcode.com/2022
+https://adventofcode.com/
 
-Assumming `DD` is the day number, paste your input into `dDD/input.txt` and run:
+Assumming `DD` is the day number, paste your input into `yearYYYY/src/dDD/input.txt` and run:
 ```
-cargo run --release --bin dDD
+cargo run --release -p yearYYYY --bin dDD
 ```
 
 Starting from d14 benchmarks are available:
 ```
-cargo bench -- dDD
+cargo bench -p yearYYYY -- dDD
 ```
 
-I have no generic solution for d22. Your cube must have the following layout
+I have no generic solution for Y2022 D22. Your cube must have the following layout
 ```
  ##
  #
