@@ -1,6 +1,6 @@
 https://adventofcode.com/
 
-Assumming `DD` is the day number, paste your input into `yearYYYY/src/dDD/input.txt` and run:
+Assumming `DD` is the day number, paste your input into `yearYYYY/src/dDD.txt` and run:
 ```
 cargo run --release -p yearYYYY --bin dDD
 ```
