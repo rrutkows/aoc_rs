@@ -2,7 +2,7 @@ use std::collections::HashSet;
 use std::str::FromStr;
 
 pub fn solve(input: &str, knot_count: usize) -> usize {
-    let mut knots: Vec<(i32, i32)> = Vec::from_iter(std::iter::repeat((0, 0)).take(knot_count));
+    let mut knots: Vec<(i32, i32)> = Vec::from_iter(std::iter::repeat_n((0, 0), knot_count));
     let mut tail_visited: HashSet<(i32, i32)> = HashSet::new();
     tail_visited.insert((0, 0));
     for line in input.lines() {

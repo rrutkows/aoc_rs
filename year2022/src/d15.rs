@@ -54,7 +54,7 @@ pub fn solve02(input: &str) -> i64 {
     -1
 }
 
-fn parse<'a>(input: &str) -> impl Iterator<Item = (Coords, Coords)> + '_ {
+fn parse(input: &str) -> impl Iterator<Item = (Coords, Coords)> + '_ {
     input.lines().map(|line| {
         let numbers = String::from_iter(
             line.chars()

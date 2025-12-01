@@ -29,7 +29,7 @@ impl Snapshot {
             .enumerate()
             .map(|(i, cost)| {
                 if *cost as u32 > self.minerals[i] {
-                    (*cost as u32 - self.minerals[i] + self.robots[i] - 1) / self.robots[i]
+                    (*cost as u32 - self.minerals[i]).div_ceil(self.robots[i])
                 } else {
                     0
                 }

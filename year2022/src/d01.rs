@@ -1,7 +1,7 @@
 use std::iter;
 
 pub fn run(input: &str, top_count: usize) -> i32 {
-    let mut top: Vec<i32> = Vec::from_iter(iter::repeat(0).take(top_count));
+    let mut top: Vec<i32> = Vec::from_iter(iter::repeat_n(0, top_count));
     let mut current = 0;
     for input in input.lines() {
         if input.is_empty() {

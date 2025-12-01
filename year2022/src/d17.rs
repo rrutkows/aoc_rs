@@ -122,14 +122,15 @@ pub fn solve(input: &str, rock_count: usize) -> usize {
         chamber.splice(0..chamber.len() - top.len(), std::iter::empty());
 
         let history_key = (rock_index, air_index);
-        if let Some(prev) = history.get(&history_key) {
-            if top == *prev.chamber_top {
-                let cycle_count = (rock_count - i - 1) / (i - prev.rock_count);
-                i += cycle_count * (i - prev.rock_count);
-                height += cycle_count * (chamber.len() + height - prev.height);
-                history.clear();
-            }
+        if let Some(prev) = history.get(&history_key)
+            && top == *prev.chamber_top
+        {
+            let cycle_count = (rock_count - i - 1) / (i - prev.rock_count);
+            i += cycle_count * (i - prev.rock_count);
+            height += cycle_count * (chamber.len() + height - prev.height);
+            history.clear();
         }
+
         history.insert(
             history_key,
             Snapshot {
