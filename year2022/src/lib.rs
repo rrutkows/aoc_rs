@@ -25,5 +25,5 @@ pub mod d24;
 pub mod d25;
 
 pub fn get_input(day: u8) -> String {
-    common::get_input(2022, day)
+    common::get_input(env!("CARGO_MANIFEST_DIR"), day)
 }
