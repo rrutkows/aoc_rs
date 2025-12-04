@@ -1,22 +1,26 @@
 use criterion::{Criterion, criterion_group, criterion_main};
 use year2025::{d01, d02, d03, d04};
 
+fn bench_day<F1, F2, O>(c: &mut Criterion, day: u8, p1: F1, p2: F2)
+where
+    F1: Fn(&str) -> O,
+    F2: Fn(&str) -> O,
+{
+    let input = year2025::get_input(day);
+    c.bench_function(&format!("d{day:02}p1"), |b| b.iter(|| p1(&input)));
+    c.bench_function(&format!("d{day:02}p2"), |b| b.iter(|| p2(&input)));
+}
+
 fn criterion_benchmark(c: &mut Criterion) {
-    let input = year2025::get_input(1);
-    c.bench_function("d01p1", |b| b.iter(|| d01::solve01(&input)));
-    c.bench_function("d01p2", |b| b.iter(|| d01::solve02(&input)));
-
-    let input = year2025::get_input(2);
-    c.bench_function("d02p1", |b| b.iter(|| d02::solve01(&input)));
-    c.bench_function("d02p2", |b| b.iter(|| d02::solve02(&input)));
-
-    let input = year2025::get_input(3);
-    c.bench_function("d03p1", |b| b.iter(|| d03::solve(&input, 2)));
-    c.bench_function("d03p2", |b| b.iter(|| d03::solve(&input, 12)));
-
-    let input = year2025::get_input(4);
-    c.bench_function("d04p1", |b| b.iter(|| d04::solve01(&input)));
-    c.bench_function("d04p2", |b| b.iter(|| d04::solve02(&input)));
+    bench_day(c, 1, d01::solve01, d01::solve02);
+    bench_day(c, 2, d02::solve01, d02::solve02);
+    bench_day(
+        c,
+        3,
+        |input| d03::solve(input, 2),
+        |input| d03::solve(input, 12),
+    );
+    bench_day(c, 4, d04::solve01, d04::solve02);
 }
 
 criterion_group!(benches, criterion_benchmark);
