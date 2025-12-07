@@ -30,3 +30,14 @@ where
     let start = Instant::now();
     println!("{} {:?}", f(), start.elapsed());
 }
+
+pub fn run_both<T1, T2, F>(f: F)
+where
+    T1: Display,
+    T2: Display,
+    F: Fn() -> (T1, T2),
+{
+    let start = Instant::now();
+    let (p1, p2) = f();
+    println!("{}, {} {:?}", p1, p2, start.elapsed());
+}
