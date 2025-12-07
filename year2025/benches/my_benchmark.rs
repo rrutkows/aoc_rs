@@ -1,10 +1,10 @@
 use criterion::{Criterion, criterion_group, criterion_main};
 use year2025::{d01, d02, d03, d04, d05, d06, d07};
 
-fn bench_day<F1, F2, O>(c: &mut Criterion, day: u8, p1: F1, p2: F2)
+fn bench_day<F1, F2, O1, O2>(c: &mut Criterion, day: u8, p1: F1, p2: F2)
 where
-    F1: Fn(&str) -> O,
-    F2: Fn(&str) -> O,
+    F1: Fn(&str) -> O1,
+    F2: Fn(&str) -> O2,
 {
     let input = year2025::get_input(day);
     c.bench_function(&format!("d{day:02}p1"), |b| b.iter(|| p1(&input)));

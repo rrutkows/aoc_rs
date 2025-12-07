@@ -11,7 +11,7 @@ pub fn solve01(input: &str) -> usize {
         .count()
 }
 
-pub fn solve02(input: &str) -> usize {
+pub fn solve02(input: &str) -> u64 {
     let (ranges, _) = input.split_once("\n\n").unwrap();
 
     let mut merged: Vec<(u64, u64)> = vec![];
@@ -31,7 +31,7 @@ pub fn solve02(input: &str) -> usize {
         merged.push((s, e));
     }
 
-    merged.into_iter().map(|(s, e)| e - s + 1).sum::<u64>() as usize
+    merged.into_iter().map(|(s, e)| e - s + 1).sum()
 }
 
 fn parse(ranges: &str) -> impl Iterator<Item = (u64, u64)> {
