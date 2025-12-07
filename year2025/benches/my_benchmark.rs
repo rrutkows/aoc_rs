@@ -1,5 +1,5 @@
 use criterion::{Criterion, criterion_group, criterion_main};
-use year2025::{d01, d02, d03, d04, d05, d06};
+use year2025::{d01, d02, d03, d04, d05, d06, d07};
 
 fn bench_day<F1, F2, O>(c: &mut Criterion, day: u8, p1: F1, p2: F2)
 where
@@ -23,6 +23,7 @@ fn criterion_benchmark(c: &mut Criterion) {
     bench_day(c, 4, d04::solve01, d04::solve02);
     bench_day(c, 5, d05::solve01, d05::solve02);
     bench_day(c, 6, d06::solve01, d06::solve02);
+    bench_day(c, 7, d07::solve01, d07::solve02);
 }
 
 criterion_group!(benches, criterion_benchmark);
