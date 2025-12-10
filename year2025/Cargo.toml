@@ -5,6 +5,7 @@ edition = "2024"
 
 [dependencies]
 common.path = "../common"
+good_lp = { version = "*", features = ["scip", "scip_bundled"], default-features = false }
 
 [dev-dependencies]
 criterion.workspace = true

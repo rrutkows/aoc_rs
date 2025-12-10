@@ -7,6 +7,8 @@ or paste the value of AOC cookie `session` into `session` file in the project's 
 If the file `dDD.txt` does not exist, the app will try to download and save it
 following the [guidelines].
 
+Y2025 D10 uses [good_lp]. Installing **libclang-dev** was required to use the [SCIP] solver on Debian.
+
 Run:
 ```
 cargo run --release -p yearYYYY --bin dDD
@@ -27,3 +29,5 @@ I have no generic solution for Y2022 D22. Your cube must have the following layo
 where `#` is a 50x50 fragment
 
 [guidelines]: https://www.reddit.com/r/adventofcode/wiki/faqs/automation/
+[good_lp]: https://crates.io/crates/good_lp
+[SCIP]: https://scipopt.org/
