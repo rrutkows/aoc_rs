@@ -11,45 +11,61 @@ const DIRECTIONS: [(isize, isize); 8] = [
     (1, 1),
 ];
 
-fn count_adjacent<F>(
-    map: &[&[u8]],
-    x: usize,
-    y: usize,
+const LIMIT: usize = 4;
+
+struct Grid<'a> {
+    grid: Vec<&'a [u8]>,
     w: usize,
     h: usize,
-    limit: i32,
-    is_removed: F,
-) -> i32
-where
-    F: Fn(&(usize, usize)) -> bool,
-{
-    let mut adjacent_count = 0;
-    for (dx, dy) in DIRECTIONS {
-        if let Some(nx) = x.checked_add_signed(dx)
-            && let Some(ny) = y.checked_add_signed(dy)
-            && nx < w
-            && ny < h
-            && map[ny][nx] == b'@'
-            && !is_removed(&(nx, ny))
-        {
-            adjacent_count += 1;
-            if adjacent_count >= limit {
-                break;
-            }
+    removed: HashSet<(usize, usize)>,
+}
+
+impl<'a> Grid<'a> {
+    fn new(input: &'a str) -> Self {
+        let grid: Vec<_> = input.lines().map(str::as_bytes).collect();
+        let w = grid[0].len();
+        let h = grid.len();
+        Self {
+            grid,
+            w,
+            h,
+            removed: HashSet::new(),
         }
     }
-    adjacent_count
+
+    fn is_occupied(&self, x: usize, y: usize) -> bool {
+        self.grid
+            .get(y)
+            .and_then(|&row| row.get(x))
+            .is_some_and(|&v| v == b'@' && !self.removed.contains(&(x, y)))
+    }
+
+    fn has_fewer_neighbours(&self, x: usize, y: usize, limit: usize) -> bool {
+        let mut count = 0;
+        for (dx, dy) in DIRECTIONS {
+            if self.is_occupied(x.wrapping_add_signed(dx), y.wrapping_add_signed(dy)) {
+                count += 1;
+                if count >= limit {
+                    return false;
+                }
+            }
+        }
+
+        true
+    }
+
+    fn remove(&mut self, x: usize, y: usize) {
+        self.removed.insert((x, y));
+    }
 }
 
 pub fn solve01(input: &str) -> i32 {
-    let map: Vec<&[u8]> = input.lines().map(str::as_bytes).collect();
-    let w = map[0].len();
-    let h = map.len();
+    let grid = Grid::new(input);
 
     let mut sum = 0;
-    for y in 0..h {
-        for x in 0..w {
-            if map[y][x] == b'@' && count_adjacent(&map, x, y, w, h, 4, |_| false) < 4 {
+    for y in 0..grid.h {
+        for x in 0..grid.w {
+            if grid.is_occupied(x, y) && grid.has_fewer_neighbours(x, y, LIMIT) {
                 sum += 1;
             }
         }
@@ -59,34 +75,29 @@ pub fn solve01(input: &str) -> i32 {
 }
 
 pub fn solve02(input: &str) -> i32 {
-    let map: Vec<&[u8]> = input.lines().map(str::as_bytes).collect();
-    let mut removed: HashSet<(usize, usize)> = HashSet::new();
-    let w = map[0].len();
-    let h = map.len();
+    let mut grid = Grid::new(input);
+    let mut q: Vec<(usize, usize)> = vec![];
+    for y in 0..grid.h {
+        for x in 0..grid.w {
+            if grid.is_occupied(x, y) && grid.has_fewer_neighbours(x, y, LIMIT) {
+                q.push((x, y));
+            }
+        }
+    }
 
     let mut sum = 0;
-    loop {
-        let mut current_removed: Vec<(usize, usize)> = Vec::new();
-        for y in 0..h {
-            for x in 0..w {
-                if map[y][x] == b'@'
-                    && !removed.contains(&(x, y))
-                    && count_adjacent(&map, x, y, w, h, 4, |coords| removed.contains(coords)) < 4
-                {
-                    current_removed.push((x, y));
+    while let Some((x, y)) = q.pop() {
+        if grid.is_occupied(x, y) {
+            sum += 1;
+            grid.remove(x, y);
+            for (dx, dy) in DIRECTIONS {
+                let nx = x.wrapping_add_signed(dx);
+                let ny = y.wrapping_add_signed(dy);
+                if grid.is_occupied(nx, ny) && grid.has_fewer_neighbours(nx, ny, LIMIT) {
+                    q.push((nx, ny));
                 }
             }
         }
-
-        if current_removed.is_empty() {
-            break;
-        }
-
-        for coords in &current_removed {
-            removed.insert(*coords);
-        }
-
-        sum += current_removed.len() as i32;
     }
 
     sum
